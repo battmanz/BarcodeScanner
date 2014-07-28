@@ -18,7 +18,8 @@ package com.google.zxing.client.android.result;
 
 import android.content.ActivityNotFoundException;
 import android.util.Log;
-import com.google.zxing.client.android.R;
+
+import com.google.zxing.client.android.FakeR;
 import com.google.zxing.client.result.CalendarParsedResult;
 import com.google.zxing.client.result.ParsedResult;
 
@@ -35,17 +36,20 @@ import java.util.Date;
  * @author Sean Owen
  */
 public final class CalendarResultHandler extends ResultHandler {
-
+  private FakeR fakeR;
+  
   private static final String TAG = CalendarResultHandler.class.getSimpleName();
 
-  private static int[] buttons;
+  private final int[] buttons;
 
   public CalendarResultHandler(Activity activity, ParsedResult result) {
     super(activity, result);
-
-	buttons = new int[]{
-		fakeR.getId("string", "button_add_calendar")
-	};
+    
+    fakeR = new FakeR(activity);
+    
+    buttons = new int[] {
+      fakeR.getId("string", "button_add_calendar")
+    };
   }
 
   @Override

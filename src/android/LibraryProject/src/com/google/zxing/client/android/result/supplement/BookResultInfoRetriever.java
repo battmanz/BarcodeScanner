@@ -22,10 +22,10 @@ import java.util.Collection;
 
 import android.content.Context;
 import android.widget.TextView;
-import com.google.zxing.FakeR;
+
+import com.google.zxing.client.android.FakeR;
 import com.google.zxing.client.android.HttpHelper;
 import com.google.zxing.client.android.LocaleManager;
-import com.google.zxing.client.android.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,13 +38,13 @@ import com.google.zxing.client.android.history.HistoryManager;
  * @author Sean Owen
  */
 final class BookResultInfoRetriever extends SupplementalInfoRetriever {
-
   private final String isbn;
   private final String source;
   private final Context context;
   
   BookResultInfoRetriever(TextView textView, String isbn, HistoryManager historyManager, Context context) {
     super(textView, historyManager);
+    
     this.isbn = isbn;
     this.source = context.getString(FakeR.getId(context, "string", "msg_google_books"));
     this.context = context;
@@ -89,32 +89,13 @@ final class BookResultInfoRetriever extends SupplementalInfoRetriever {
       }
 
     } catch (JSONException e) {
-      throw new IOException(e.toString());
+      throw new IOException(e);
     }
 
     Collection<String> newTexts = new ArrayList<String>();
-
-    if (title != null && title.length() > 0) {
-      newTexts.add(title);
-    }
-
-    if (authors != null && !authors.isEmpty()) {
-      boolean first = true;
-      StringBuilder authorsText = new StringBuilder();
-      for (String author : authors) {
-        if (first) {
-          first = false;
-        } else {
-          authorsText.append(", ");
-        }
-        authorsText.append(author);
-      }
-      newTexts.add(authorsText.toString());
-    }
-
-    if (pages != null && pages.length() > 0) {
-      newTexts.add(pages + "pp.");
-    }
+    maybeAddText(title, newTexts);
+    maybeAddTextSeries(authors, newTexts);
+    maybeAddText(pages == null || pages.isEmpty() ? null : pages + "pp.", newTexts);
     
     String baseBookUri = "http://www.google." + LocaleManager.getBookSearchCountryTLD(context)
         + "/search?tbm=bks&source=zxing&q=";

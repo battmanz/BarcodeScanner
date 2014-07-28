@@ -16,7 +16,7 @@
 
 package com.google.zxing.client.android.result;
 
-import com.google.zxing.client.android.R;
+import com.google.zxing.client.android.FakeR;
 import com.google.zxing.client.result.GeoParsedResult;
 import com.google.zxing.client.result.ParsedResult;
 
@@ -28,14 +28,18 @@ import android.app.Activity;
  * @author dswitkin@google.com (Daniel Switkin)
  */
 public final class GeoResultHandler extends ResultHandler {
-  private static int[] buttons;
+  private FakeR fakeR;
+	
+	private final int[] buttons;
 
   public GeoResultHandler(Activity activity, ParsedResult result) {
     super(activity, result);
-	buttons = new int[]{
-		fakeR.getId("string", "button_show_map"),
-		fakeR.getId("string", "button_get_directions")
-	};
+    
+    fakeR = new FakeR(activity);
+    buttons = new int[] {
+      fakeR.getId("string", "button_show_map"),
+      fakeR.getId("string", "button_get_directions")
+    };
   }
 
   @Override

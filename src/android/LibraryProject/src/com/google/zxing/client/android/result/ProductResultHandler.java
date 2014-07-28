@@ -17,12 +17,12 @@
 package com.google.zxing.client.android.result;
 
 import com.google.zxing.Result;
-import com.google.zxing.client.android.R;
+import com.google.zxing.client.android.FakeR;
+import com.google.zxing.client.result.ExpandedProductParsedResult;
 import com.google.zxing.client.result.ParsedResult;
 import com.google.zxing.client.result.ProductParsedResult;
 
 import android.app.Activity;
-import android.view.View;
 
 /**
  * Handles generic products which are not books.
@@ -30,22 +30,19 @@ import android.view.View;
  * @author dswitkin@google.com (Daniel Switkin)
  */
 public final class ProductResultHandler extends ResultHandler {
-  private static int[] buttons;
+  private FakeR fakeR;
+	
+	private final int[] buttons;
 
   public ProductResultHandler(Activity activity, ParsedResult result, Result rawResult) {
     super(activity, result, rawResult);
-	buttons = new int[]{
-		fakeR.getId("string", "button_product_search"),
-		fakeR.getId("string", "button_web_search"),
-		fakeR.getId("string", "button_custom_product_search")
-	};
-    showGoogleShopperButton(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        ProductParsedResult productResult = (ProductParsedResult) getResult();
-        openGoogleShopper(productResult.getNormalizedProductID());
-      }
-    });
+    
+    fakeR = new FakeR(activity);
+    buttons = new int[] {
+      fakeR.getId("string", "button_product_search"),
+      fakeR.getId("string", "button_web_search"),
+      fakeR.getId("string", "button_custom_product_search")
+    };
   }
 
   @Override
@@ -60,18 +57,28 @@ public final class ProductResultHandler extends ResultHandler {
 
   @Override
   public void handleButtonPress(int index) {
-    ProductParsedResult productResult = (ProductParsedResult) getResult();
+    String productID = getProductIDFromResult(getResult());
     switch (index) {
       case 0:
-        openProductSearch(productResult.getNormalizedProductID());
+        openProductSearch(productID);
         break;
       case 1:
-        webSearch(productResult.getNormalizedProductID());
+        webSearch(productID);
         break;
       case 2:
-        openURL(fillInCustomSearchURL(productResult.getNormalizedProductID()));
+        openURL(fillInCustomSearchURL(productID));
         break;
     }
+  }
+
+  private static String getProductIDFromResult(ParsedResult rawResult) {
+    if (rawResult instanceof ProductParsedResult) {
+      return ((ProductParsedResult) rawResult).getNormalizedProductID();
+    }
+    if (rawResult instanceof ExpandedProductParsedResult) {
+      return ((ExpandedProductParsedResult) rawResult).getRawText();
+    }
+    throw new IllegalArgumentException(rawResult.getClass().toString());
   }
 
   @Override

@@ -109,6 +109,9 @@ public class BarcodeScanner extends CordovaPlugin {
     public void scan() {
         Intent intentScan = new Intent(SCAN_INTENT);
         intentScan.addCategory(Intent.CATEGORY_DEFAULT);
+        intentScan.putExtra("SCAN_MODE", "PDF417_MODE");
+        intentScan.putExtra("TRY_HARDER", "true");
+        //intentScan.putExtra("SCAN_FORMATS", "PDF_417,CODE_39,CODE_93,CODE_128,DATA_MATRIX,ITF,CODABAR,EAN_13,EAN_8,UPC_A,UPC_E,QR_CODE");
 
         this.cordova.startActivityForResult((CordovaPlugin) this, intentScan, REQUEST_CODE);
     }

@@ -19,9 +19,9 @@ package com.google.zxing.client.android.result.supplement;
 import android.content.Context;
 import android.text.Html;
 import android.widget.TextView;
-import com.google.zxing.FakeR;
+
+import com.google.zxing.client.android.FakeR;
 import com.google.zxing.client.android.HttpHelper;
-import com.google.zxing.client.android.R;
 import com.google.zxing.client.android.history.HistoryManager;
 import com.google.zxing.client.android.LocaleManager;
 
@@ -30,6 +30,14 @@ import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * <p>Retrieves product information from Google Product search.</p>
+ *
+ * <p><strong>Please do not reuse this code.</strong> Using results in this way requires permission
+ * from Google, and that is not granted to users via this project.</p>
+ *
+ * @author Sean Owen
+ */
 final class ProductResultInfoRetriever extends SupplementalInfoRetriever {
 
   private static final Pattern[] PRODUCT_NAME_PRICE_PATTERNS = {
@@ -52,7 +60,7 @@ final class ProductResultInfoRetriever extends SupplementalInfoRetriever {
   void retrieveSupplementalInfo() throws IOException {
 
     String encodedProductID = URLEncoder.encode(productID, "UTF-8");
-    String uri = "http://www.google." + LocaleManager.getProductSearchCountryTLD(context)
+    String uri = "https://www.google." + LocaleManager.getProductSearchCountryTLD(context)
             + "/m/products?ie=utf8&oe=utf8&scoring=p&source=zxing&q=" + encodedProductID;
     CharSequence content = HttpHelper.downloadViaHttp(uri, HttpHelper.ContentType.HTML);
 

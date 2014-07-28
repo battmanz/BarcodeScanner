@@ -16,14 +16,15 @@
 
 package com.google.zxing.client.android.encode;
 
+import android.graphics.Point;
 import android.view.Display;
 import android.view.MenuInflater;
 import android.view.WindowManager;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
+import com.google.zxing.client.android.FakeR;
 import com.google.zxing.client.android.FinishListener;
 import com.google.zxing.client.android.Intents;
-import com.google.zxing.client.android.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -37,7 +38,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.google.zxing.FakeR;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -52,7 +52,8 @@ import java.util.regex.Pattern;
  * @author dswitkin@google.com (Daniel Switkin)
  */
 public final class EncodeActivity extends Activity {
-
+  private FakeR fakeR;
+	
   private static final String TAG = EncodeActivity.class.getSimpleName();
 
   private static final int MAX_BARCODE_FILENAME_LENGTH = 24;
@@ -61,21 +62,22 @@ public final class EncodeActivity extends Activity {
 
   private QRCodeEncoder qrCodeEncoder;
 
-  private static FakeR fakeR;
   @Override
   public void onCreate(Bundle icicle) {
     super.onCreate(icicle);
+    
     fakeR = new FakeR(this);
+    
     Intent intent = getIntent();
     if (intent == null) {
       finish();
     } else {
-//      String action = intent.getAction();
-//      if (Intents.Encode.ACTION.equals(action) || Intent.ACTION_SEND.equals(action)) {
+      String action = intent.getAction();
+      if (Intents.Encode.ACTION.equals(action) || Intent.ACTION_SEND.equals(action)) {
         setContentView(fakeR.getId("layout", "encode"));
-//      } else {
-//        finish();
-//      }
+      } else {
+        finish();
+      }
     }
   }
 
@@ -98,21 +100,22 @@ public final class EncodeActivity extends Activity {
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     int itemId = item.getItemId();
-    if (itemId == fakeR.getId("id", "menu_share")) {
-        share();
-        return true;
-    } else if (itemId == fakeR.getId("id", "menu_encode")) {
-        Intent intent = getIntent();
-        if (intent == null) {
+	if (itemId == fakeR.getId("id", "menu_share")) {
+		share();
+		return true;
+	} else if (itemId == fakeR.getId("id", "menu_encode")) {
+		Intent intent = getIntent();
+		if (intent == null) {
           return false;
         }
-        intent.putExtra(USE_VCARD_KEY, !qrCodeEncoder.isUseVCard());
-        startActivity(intent);
-        finish();
-        return true;
-    } else {
-        return false;
-    }
+		intent.putExtra(USE_VCARD_KEY, !qrCodeEncoder.isUseVCard());
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		startActivity(intent);
+		finish();
+		return true;
+	} else {
+		return false;
+	}
   }
   
   private void share() {
@@ -147,7 +150,10 @@ public final class EncodeActivity extends Activity {
       return;
     }
     File barcodeFile = new File(barcodesRoot, makeBarcodeFileName(contents) + ".png");
-    barcodeFile.delete();
+    if (!barcodeFile.delete()) {
+      Log.w(TAG, "Could not delete " + barcodeFile);
+      // continue anyway
+    }
     FileOutputStream fos = null;
     try {
       fos = new FileOutputStream(barcodeFile);
@@ -189,8 +195,10 @@ public final class EncodeActivity extends Activity {
     // This assumes the view is full screen, which is a good assumption
     WindowManager manager = (WindowManager) getSystemService(WINDOW_SERVICE);
     Display display = manager.getDefaultDisplay();
-    int width = display.getWidth();
-    int height = display.getHeight();
+    Point displaySize = new Point();
+    display.getSize(displaySize);
+    int width = displaySize.x;
+    int height = displaySize.y;
     int smallerDimension = width < height ? width : height;
     smallerDimension = smallerDimension * 7 / 8;
 

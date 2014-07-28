@@ -19,6 +19,7 @@ package com.google.zxing.client.android;
 import com.google.zxing.ResultPoint;
 import com.google.zxing.client.android.camera.CameraManager;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -27,7 +28,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
-import com.google.zxing.FakeR;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +39,8 @@ import java.util.List;
  * @author dswitkin@google.com (Daniel Switkin)
  */
 public final class ViewfinderView extends View {
-
+  private FakeR fakeR;
+  
   private static final int[] SCANNER_ALPHA = {0, 64, 128, 192, 255, 192, 128, 64};
   private static final long ANIMATION_DELAY = 80L;
   private static final int CURRENT_POINT_OPACITY = 0xA0;
@@ -57,14 +58,12 @@ public final class ViewfinderView extends View {
   private List<ResultPoint> possibleResultPoints;
   private List<ResultPoint> lastPossibleResultPoints;
 
-  private static FakeR fakeR;
-
   // This constructor is used when the class is built from an XML resource.
   public ViewfinderView(Context context, AttributeSet attrs) {
     super(context, attrs);
 
-	fakeR = new FakeR(context);
-
+    fakeR = new FakeR(context);
+    
     // Initialize these once for performance rather than calling them every time in onDraw().
     paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     Resources resources = getResources();
@@ -81,13 +80,15 @@ public final class ViewfinderView extends View {
     this.cameraManager = cameraManager;
   }
 
+  @SuppressLint("DrawAllocation")
   @Override
   public void onDraw(Canvas canvas) {
     if (cameraManager == null) {
       return; // not ready yet, early draw before done configuring
     }
     Rect frame = cameraManager.getFramingRect();
-    if (frame == null) {
+    Rect previewFrame = cameraManager.getFramingRectInPreview();    
+    if (frame == null || previewFrame == null) {
       return;
     }
     int width = canvas.getWidth();
@@ -113,7 +114,6 @@ public final class ViewfinderView extends View {
       int middle = frame.height() / 2 + frame.top;
       canvas.drawRect(frame.left + 2, middle - 1, frame.right - 1, middle + 2, paint);
       
-      Rect previewFrame = cameraManager.getFramingRectInPreview();
       float scaleX = frame.width() / (float) previewFrame.width();
       float scaleY = frame.height() / (float) previewFrame.height();
 

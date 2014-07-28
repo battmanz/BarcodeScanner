@@ -79,7 +79,7 @@ public final class Detector {
 
     // Figure out which point is their intersection by tallying up the number of times we see the
     // endpoints in the four endpoints. One will show up twice.
-    Map<ResultPoint,Integer> pointCount = new HashMap<ResultPoint,Integer>();
+    Map<ResultPoint,Integer> pointCount = new HashMap<ResultPoint, Integer>();
     increment(pointCount, lSideOne.getFrom());
     increment(pointCount, lSideOne.getTo());
     increment(pointCount, lSideTwo.getFrom());
@@ -370,7 +370,7 @@ public final class Detector {
 
     int dx = Math.abs(toX - fromX);
     int dy = Math.abs(toY - fromY);
-    int error = -dx >> 1;
+    int error = -dx / 2;
     int ystep = fromY < toY ? 1 : -1;
     int xstep = fromX < toX ? 1 : -1;
     int transitions = 0;

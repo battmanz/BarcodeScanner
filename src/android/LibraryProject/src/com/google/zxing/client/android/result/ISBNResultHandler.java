@@ -17,12 +17,11 @@
 package com.google.zxing.client.android.result;
 
 import com.google.zxing.Result;
-import com.google.zxing.client.android.R;
+import com.google.zxing.client.android.FakeR;
 import com.google.zxing.client.result.ISBNParsedResult;
 import com.google.zxing.client.result.ParsedResult;
 
 import android.app.Activity;
-import android.view.View;
 
 /**
  * Handles books encoded by their ISBN values.
@@ -30,23 +29,20 @@ import android.view.View;
  * @author dswitkin@google.com (Daniel Switkin)
  */
 public final class ISBNResultHandler extends ResultHandler {
-  private static int[] buttons;
+  private FakeR fakeR;
+	
+	private final int[] buttons;
 
   public ISBNResultHandler(Activity activity, ParsedResult result, Result rawResult) {
     super(activity, result, rawResult);
-	buttons = new int[]{
-		fakeR.getId("string", "button_product_search"),
-		fakeR.getId("string", "button_book_search"),
-		fakeR.getId("string", "button_search_book_contents"),
-		fakeR.getId("string", "button_custom_product_search")
-	};
-    showGoogleShopperButton(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        ISBNParsedResult isbnResult = (ISBNParsedResult) getResult();
-        openGoogleShopper(isbnResult.getISBN());
-      }
-    });
+    
+    fakeR = new FakeR(activity);
+    buttons = new int[] {
+      fakeR.getId("string", "button_product_search"),
+      fakeR.getId("string", "button_book_search"),
+      fakeR.getId("string", "button_search_book_contents"),
+      fakeR.getId("string", "button_custom_product_search")
+    };
   }
 
   @Override

@@ -16,8 +16,8 @@
 
 package com.google.zxing.client.android.result;
 
+import com.google.zxing.client.android.FakeR;
 import com.google.zxing.client.android.LocaleManager;
-import com.google.zxing.client.android.R;
 import com.google.zxing.client.result.ParsedResult;
 import com.google.zxing.client.result.URIParsedResult;
 
@@ -31,21 +31,25 @@ import java.util.Locale;
  * @author dswitkin@google.com (Daniel Switkin)
  */
 public final class URIResultHandler extends ResultHandler {
+  private FakeR fakeR;
+	
   // URIs beginning with entries in this array will not be saved to history or copied to the
   // clipboard for security.
   private static final String[] SECURE_PROTOCOLS = {
     "otpauth:"
   };
 
-  private static int[] buttons;
+  private final int[] buttons;
 
   public URIResultHandler(Activity activity, ParsedResult result) {
     super(activity, result);
-	buttons = new int[]{
-		  fakeR.getId("string", "button_open_browser"),
-		  fakeR.getId("string", "button_share_by_email"),
-		  fakeR.getId("string", "button_share_by_sms"),
-		  fakeR.getId("string", "button_search_book_contents"),
+    
+    fakeR = new FakeR(activity);
+    buttons = new int[] {
+      fakeR.getId("string", "button_open_browser"),
+      fakeR.getId("string", "button_share_by_email"),
+      fakeR.getId("string", "button_share_by_sms"),
+      fakeR.getId("string", "button_search_book_contents"),
     };
   }
 
@@ -60,6 +64,11 @@ public final class URIResultHandler extends ResultHandler {
   @Override
   public int getButtonText(int index) {
     return buttons[index];
+  }
+
+  @Override
+  public Integer getDefaultButtonID() {
+    return 0;
   }
 
   @Override

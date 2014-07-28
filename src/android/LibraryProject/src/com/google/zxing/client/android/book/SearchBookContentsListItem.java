@@ -16,7 +16,7 @@
 
 package com.google.zxing.client.android.book;
 
-import com.google.zxing.client.android.R;
+import com.google.zxing.client.android.FakeR;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -26,7 +26,6 @@ import android.text.style.StyleSpan;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.google.zxing.FakeR;
 
 import java.util.Locale;
 
@@ -36,17 +35,19 @@ import java.util.Locale;
  * @author dswitkin@google.com (Daniel Switkin)
  */
 public final class SearchBookContentsListItem extends LinearLayout {
+  private FakeR fakeR;
+	
   private TextView pageNumberView;
   private TextView snippetView;
 
-  private static FakeR fakeR;
   SearchBookContentsListItem(Context context) {
     super(context);
-	fakeR = new FakeR(context);
+    fakeR = new FakeR(context);
   }
 
   public SearchBookContentsListItem(Context context, AttributeSet attrs) {
     super(context, attrs);
+    fakeR = new FakeR(context);
   }
 
   @Override
@@ -59,7 +60,9 @@ public final class SearchBookContentsListItem extends LinearLayout {
   public void set(SearchBookContentsResult result) {
     pageNumberView.setText(result.getPageNumber());
     String snippet = result.getSnippet();
-    if (snippet.length() > 0) {
+    if (snippet.isEmpty()) {
+      snippetView.setText("");
+    } else {
       if (result.getValidSnippet()) {
         String lowerQuery = SearchBookContentsResult.getQuery().toLowerCase(Locale.getDefault());
         String lowerSnippet = snippet.toLowerCase(Locale.getDefault());
@@ -80,8 +83,6 @@ public final class SearchBookContentsListItem extends LinearLayout {
         // This may be an error message, so don't try to bold the query terms within it
         snippetView.setText(snippet);
       }
-    } else {
-      snippetView.setText("");
     }
   }
 }

@@ -16,7 +16,7 @@
 
 package com.google.zxing.client.android.result;
 
-import com.google.zxing.client.android.R;
+import com.google.zxing.client.android.FakeR;
 import com.google.zxing.client.result.ParsedResult;
 import com.google.zxing.client.result.TelParsedResult;
 
@@ -29,14 +29,18 @@ import android.telephony.PhoneNumberUtils;
  * @author dswitkin@google.com (Daniel Switkin)
  */
 public final class TelResultHandler extends ResultHandler {
-  private static int[] buttons;
+  private FakeR fakeR;
+  
+	private final int[] buttons;
 
   public TelResultHandler(Activity activity, ParsedResult result) {
     super(activity, result);
-	buttons = new int[]{
-		fakeR.getId("string", "button_dial"),
-		fakeR.getId("string", "button_add_contact")
-	};
+    
+    fakeR = new FakeR(activity);
+    buttons = new int[] {
+      fakeR.getId("string", "button_dial"),
+      fakeR.getId("string", "button_add_contact")
+    };
   }
 
   @Override

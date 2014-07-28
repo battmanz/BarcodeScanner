@@ -17,7 +17,7 @@
 package com.google.zxing.client.android.result;
 
 import com.google.zxing.Result;
-import com.google.zxing.client.android.R;
+import com.google.zxing.client.android.FakeR;
 import com.google.zxing.client.result.ParsedResult;
 
 import android.app.Activity;
@@ -28,17 +28,20 @@ import android.app.Activity;
  * @author dswitkin@google.com (Daniel Switkin)
  */
 public final class TextResultHandler extends ResultHandler {
-
-  private static int[] buttons;
+  private FakeR fakeR;
+	
+  private final int[] buttons;
 
   public TextResultHandler(Activity activity, ParsedResult result, Result rawResult) {
     super(activity, result, rawResult);
-	buttons = new int[]{
-		fakeR.getId("string", "button_web_search"),
-		fakeR.getId("string", "button_share_by_email"),
-		fakeR.getId("string", "button_share_by_sms"),
-		fakeR.getId("string", "button_custom_product_search"),
-	};
+    
+    fakeR = new FakeR(activity);
+    buttons = new int[] {
+      fakeR.getId("string", "button_web_search"),
+      fakeR.getId("string", "button_share_by_email"),
+      fakeR.getId("string", "button_share_by_sms"),
+      fakeR.getId("string", "button_custom_product_search"),
+    };
   }
 
   @Override

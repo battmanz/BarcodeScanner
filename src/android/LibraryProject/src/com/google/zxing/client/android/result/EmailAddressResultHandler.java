@@ -16,7 +16,7 @@
 
 package com.google.zxing.client.android.result;
 
-import com.google.zxing.client.android.R;
+import com.google.zxing.client.android.FakeR;
 import com.google.zxing.client.result.EmailAddressParsedResult;
 import com.google.zxing.client.result.ParsedResult;
 
@@ -28,14 +28,19 @@ import android.app.Activity;
  * @author dswitkin@google.com (Daniel Switkin)
  */
 public final class EmailAddressResultHandler extends ResultHandler {
-  private static int[] buttons;
+  private FakeR fakeR;
+	
+	private final int[] buttons;
 
   public EmailAddressResultHandler(Activity activity, ParsedResult result) {
     super(activity, result);
-	buttons = new int[]{
-		fakeR.getId("string", "button_email"),
-		fakeR.getId("string", "button_add_contact")
-	};
+    
+    fakeR = new FakeR(activity);
+    
+    buttons = new int[] {
+      fakeR.getId("string", "button_email"),
+      fakeR.getId("string", "button_add_contact")
+    };
   }
 
   @Override

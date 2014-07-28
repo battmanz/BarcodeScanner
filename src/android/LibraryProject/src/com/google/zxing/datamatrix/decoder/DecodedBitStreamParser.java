@@ -72,7 +72,7 @@ final class DecodedBitStreamParser {
   };
 
   private static final char[] TEXT_SHIFT3_SET_CHARS = {
-    '\'', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
+    '`', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
     'O',  'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '{', '|', '}', '~', (char) 127
   };
 
@@ -112,7 +112,7 @@ final class DecodedBitStreamParser {
       }
     } while (mode != Mode.PAD_ENCODE && bits.available() > 0);
     if (resultTrailer.length() > 0) {
-      result.append(resultTrailer.toString());
+      result.append(resultTrailer);
     }
     return new DecoderResult(bytes, result.toString(), byteSegments.isEmpty() ? null : byteSegments, null);
   }
